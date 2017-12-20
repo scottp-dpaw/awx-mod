@@ -324,13 +324,13 @@ class APIView(View):
         Check if the request should be permitted.
         Raises an appropriate exception if the request is not permitted.
         """
-        print('!!!! check_permissions called')
-        import traceback; traceback.print_stack()
-        print('user: {}'.format(request.user.__dict__))
-        print('request: {}'.format(request.__dict__))
+        #print('!!!! check_permissions called')
+        #import traceback; traceback.print_stack()
+        #print('user: {}'.format(request.user.__dict__))
+        #print('request: {}'.format(request.__dict__))
         for permission in self.get_permissions():
             if not permission.has_permission(request, self):
-                print('- bombed out on permission {}'.format(permission))
+                #print('- bombed out on permission {}'.format(permission))
                 self.permission_denied(
                     request, message=getattr(permission, 'message', None)
                 )

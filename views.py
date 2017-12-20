@@ -326,6 +326,7 @@ class APIView(View):
         """
         print('!!!! check_permissions called')
         import traceback; traceback.print_stack()
+        print('user: {}'.format(request.user.__dict__))
         for permission in self.get_permissions():
             if not permission.has_permission(request, self):
                 print('- bombed out on permission {}'.format(permission))

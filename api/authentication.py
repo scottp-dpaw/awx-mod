@@ -81,6 +81,7 @@ class TokenAuthentication(authentication.TokenAuthentication):
         return self.authenticate_credentials(auth[1])
 
     def authenticate_credentials(self, key):
+        print('Calling authenticate_credentials with key {}...'.format(key))
         now = tz_now()
         # Retrieve the request hash and token.
         try:
@@ -91,14 +92,17 @@ class TokenAuthentication(authentication.TokenAuthentication):
             )
         except self.model.DoesNotExist:
             raise exceptions.AuthenticationFailed(AuthToken.reason_long('invalid_token'))
+        print('Found token {}'.format(token.__dict__))
 
         # Tell the user why their token was previously invalidated.
         if token.invalidated:
+            print('Token is invalidated! dying')
             raise exceptions.AuthenticationFailed(AuthToken.reason_long(token.reason))
 
         # Explicitly handle expired tokens
         if token.is_expired(now=now):
             token.invalidate(reason='timeout_reached')
+            print('Token is expired! dying')
             raise exceptions.AuthenticationFailed(AuthToken.reason_long('timeout_reached'))
 
         # Token invalidated due to session limit config being reduced
@@ -106,16 +110,19 @@ class TokenAuthentication(authentication.TokenAuthentication):
         if settings.AUTH_TOKEN_PER_USER != -1:
             if not token.in_valid_tokens(now=now):
                 token.invalidate(reason='limit_reached')
+                print('Token session limit reached! dying')
                 raise exceptions.AuthenticationFailed(AuthToken.reason_long('limit_reached'))
 
         # If the user is inactive, then return an error.
         if not token.user.is_active:
+            print('User is inactive! dying')
             raise exceptions.AuthenticationFailed(_('User inactive or deleted'))
 
         # Refresh the token.
         # The token is extended from "right now" + configurable setting amount.
         token.refresh(now=now)
 
+        print('WE WON')
         # Return the user object and the token.
         return (token.user, token)
 

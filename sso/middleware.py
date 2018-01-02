@@ -54,7 +54,7 @@ class SocialAuthMiddleware(SocialAuthExceptionMiddleware):
                 print('SocialAuthMiddleware shim')
                 print('user: {}'.format(request.user.__dict__))
                 print('user.is_anonymous: {}'.format(request.user.is_anonymous))
-                print('auth_token.user: {}'.format(auth_tokenuser))
+                print('auth_token.user: {}'.format(auth_token.user))
                 print('request: {}'.format(request.__dict__))
                 if not auth_token and request.user and request.user.is_authenticated():
                     print('Logout branch picked')
